@@ -47,6 +47,6 @@ public class GlobalExceptionHandler {
     @PostConstruct
     public void before() {
         log.info("init GlobalExceptionHandler");
-        ErrorCodeFactory.initWebErrorCodes("com.lucky.lottery.errorcode.web.errorcode");
+        ErrorCodeFactory.initWebErrorCodes("com.github.phpple.errorcode.web.errorcode");
     }
 }
