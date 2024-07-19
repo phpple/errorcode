@@ -1,0 +1,46 @@
+### normal_request
+< {%
+    request.variables.set("id", "110")
+%}
+GET {{host}}/foo/detail/{{id}}
+Accept: application/json
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(jsonPath(response.body, "$.data.id") == request.variables.get("id"), "Response data's id is not 110");
+    });
+%}
+
+### server exception request
+< {%
+    request.variables.set("id", "20")
+%}
+GET {{host}}/foo/detail/{{id}}
+Accept: application/json
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(jsonPath(response.body, "$.rawCode") == 2_100_00001, "RawCode is not 2_100_00001");
+        client.assert(jsonPath(response.body, "$.code") == 1_100_00002, "Code is not 1_100_00002");
+    });
+%}
+
+### web exception request
+< {%
+    request.variables.set("id", "0")
+%}
+GET {{host}}/foo/detail/{{id}}
+Accept: application/json
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(!('rawCode' in jsonPath(response.body, "$")), "RawCode is exist");
+        client.assert(jsonPath(response.body, "$.code") == 1_100_00001, "Code is not 1_100_00001");
+    });
+%}
